@@ -1,0 +1,11 @@
+<?php
+@session_start();
+$user=$_SESSION['user'];
+$password=$_SESSION['password'];
+include_once("password.php");
+@$accountzone=$_POST['zone'];
+@$accountx=$_POST['account'];$accountx=trim(addslashes($accountx));
+@$_SESSION['accountzone']=$accountzone;
+@$_SESSION['accountx']=$accountx;
+$acctbl='accounts'.$accountzone;
+?>

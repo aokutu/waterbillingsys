@@ -1,0 +1,22 @@
+{
+    "require": {
+        "dompdf/dompdf": "^1.0",
+        "phpmailer/phpmailer": "^6.5",
+        "tecnickcom/tcpdf": "^6.4",
+        "phpoffice/phpword": "^0.18.2",
+        "milon/barcode": "^8.0",
+        "dg/mysql-dump": "^1.5",
+		"arcanedev/qr-code": "dev-master",
+        "njenga55/service-provider": "^1.0",
+        "diversen/http-send-file": "^2.0",
+        "g4/crypto": "^2.1",
+        "herdwatch/pdf-invoice": "^1.10",
+        "wade/converter": "^0.1.2",
+        "kwn/number-to-words": "^1.13",
+        "spatie/browsershot": "^3.40",
+        "konekt/pdf-invoice": "^1.10",
+        "anam/phantommagick": "^2.0",
+        "sakibrahamanchy/decimal-to-words": "^1.0"
+        
+    }
+}

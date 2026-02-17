@@ -1,0 +1,39 @@
+<?php
+/*
+@session_start();
+@$user=$_SESSION['user'];
+@$password=$_SESSION['password'];
+include_once("password.php");
+$x="SELECT * FROM users  WHERE  name='$user' AND password='$password' ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+if(mysqli_num_rows($x)>0){}
+else{ $_SESSION['message']="ACCESS  DENIED"; header("LOCATION:accessdenied4.php");exit;}
+if(!empty($_POST["keyword"])) {
+$x ="SELECT * FROM financearchive  where  account like  '" . $_POST["keyword"] . "%'   AND ZONE ='$zone'  GROUP BY ACCOUNT ORDER BY account  LIMIT 8";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+	if(mysqli_num_rows($x)>0)
+		{
+?>
+<ul id="idnumber-list">
+<?php
+ while ($y=@mysqli_fetch_array($x))
+		{
+?>
+<li onClick="selectCountry('<?php echo $y["account"]; ?>');"><?php echo $y["account"]; ?></li>
+<?php } ?>
+</ul>
+<?php } } */?>
+
+        <?php  	
+$files='uploads/photos/';
+$files=scandir($files);
+
+foreach($files as $file)
+{
+if(is_file($file)){print 
+"<tr class='filterdata'>
+ <td>".$file." </td>     <td>".(filesize($file)/1000)."KB </td>                       
+<td><input name='filename[]' type='checkbox' value='".$file."'   class='form-control input-sm'> </td>      
+			       
+           </tr>";}	
+}	?>

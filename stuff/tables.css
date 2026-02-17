@@ -1,0 +1,4 @@
+tr:hover{ background-color: #CCCCCC; cursor:pointer; color:#0000FF;}
+tr > div:hover{ background-color: #CCCCCC; cursor:pointer; color:#0000FF;}
+thead{background-color:#ADD8E6}
+@media print{tbody{ overflow:visible;}}

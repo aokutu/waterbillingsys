@@ -1,0 +1,482 @@
+<?php 
+@session_start();
+$user=$_SESSION['user'];
+$password=$_SESSION['password'];
+include_once("password.php");
+$x="SELECT * FROM users  WHERE  name='$user' AND password='$password'   AND  ACCESS  REGEXP  'GENERATE MAP'  ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+if(mysqli_num_rows($x)>0){}
+else{$_SESSION['message']="ACCESS DENIED";exit;}
+@$id=$_POST['id'];@$maptype=$_POST['maptype'];
+if($maptype=='RESET')
+{
+foreach($id as $coord){ if($id <1){unset($id[$coord]);}}	
+
+foreach($id as $coord)
+{
+
+$x="UPDATE  $accountstable  SET LONGITUDE =NULL ,LATTITUDE=NULL  WHERE ID=$coord ";mysqli_query($connect,$x)or die(mysqli_error($connect));$_SESSION['message']="COORDINATES RESET";exit;
+	
+	
+	}	
+	
+}
+
+unlink("offlinemap.html");
+
+$x="TRUNCATE TABLE mapping  ";mysqli_query($connect,$x)or die(mysqli_error($connect));
+
+foreach($id as $coord)
+	
+	{ 
+	if($id <1){unset($id[$coord]);}
+	}
+
+	
+	foreach($id as $coord)
+	
+	{ 
+	
+	$x="INSERT INTO mapping(LATTITUDE,LONGITUDE,ACCOUNT,CLIENT,STATUS,ID) SELECT  LATTITUDE,LONGITUDE,ACCOUNT,CLIENT,STATUS,ID FROM  $accountstable WHERE ID=$coord  ";
+	mysqli_query($connect,$x)or die(mysqli_error($connect));
+	}
+	
+	//$x="INSERT INTO MAPPING(LATTITUDE,LONGITUDE,ACCOUNT,CLIENT) SELECT  LATTITUDE,LONGITUDE,METERNUMBER,CONCAT('MASTER METER') FROM  $mastermeters ";
+	//mysqli_query($connect,$x)or die(mysqli_error($connect));
+
+	
+$x="select avg(lattitude),avg(longitude) FROM  mapping ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+		if(mysqli_num_rows($x)>0)
+		{
+		
+		 while ($y=@mysqli_fetch_array($x))
+		{ $latcenter=round($y['avg(lattitude)'],10);$longcenter=round($y['avg(longitude)'],10);}}	
+$_SESSION['message']="GENERATDED MAPS";
+
+$mapx = "map.html"; 
+ $myFile = fopen($mapx, "w");
+
+fputs($myFile,  ' <html  >
+
+<head>
+			
+   <script type="text/javascript" 
+           src="http://maps.google.com/maps/api/js?sensor=false"></script>
+</head> 
+<body>
+
+<div style="display:block; width:100%;">
+  <div style="width:80%; float: left; display: inline-block;">
+  <h3>LAWASCO SOFTWARE GOOGLEMAPS</h3>
+<style type="text/css">
+			body{background-color:#ADD8E6 }
+			 #map{border-style:solid;border-radius:4%;width:98%; margin-right:1%; margin-left:1%; background-color:#FFFFFF;margin-top:2%;margin-bottom:2%}
+			h4{ text-align:center; font-weight:bolder; text-decoration:underline; }
+			</style>
+			  <link rel="stylesheet"   href="bootstrap/scss/bootstrap.min.css" />
+  <link rel="stylesheet"  href="stylesheets/scrolltable.css" />
+<link rel="stylesheet"  href="stylesheets/tables.css" /><link rel="stylesheet"  href="stylesheets/dashboard.css" />
+
+   <div id="map" style="width: 700px; height: 500px"></div> 
+
+   <script type="text/javascript"> 
+      var myOptions = {
+         zoom: 10,
+         center: new google.maps.LatLng('.$latcenter.','.$longcenter.'),
+         mapTypeId: google.maps.MapTypeId.'.$maptype.'
+      };
+
+      var map = new google.maps.Map(document.getElementById("map"), myOptions);
+	  
+	  
+	   ////////////DRaw lines////////////
+	/*  var line = new google.maps.Polyline({
+    path: [
+        new google.maps.LatLng(-2.3843746537667907,40.74108123779297), 
+        new google.maps.LatLng(-2.3718069404013673,40.68267033971846),
+		new google.maps.LatLng(-2.3822692741242673,40.689880117550494),
+		new google.maps.LatLng(-2.3736935966030805,40.717860921993854)
+    ],
+    strokeColor: "#FF0000",
+    strokeOpacity: 1.0,
+    strokeWeight: 4,
+    map: map
+});*/
+	  ////////////////////////////
+	  
+	///////////////////add click to track new  mapping/////////////////////
+	
+	var infowindow = null;
+	google.maps.event.addListener(map, "click", function(e) {
+  if (infowindow != null)
+    //infowindow.close();
+
+  infowindow = new google.maps.InfoWindow({
+    content: "<b>Mouse Coordinates : </b><br><b>Latitude : </b>" + e.latLng.lat() + "<br><b>Longitude: </b>" + e.latLng.lng(),
+    position: e.latLng
+  });
+  $("#lattitude").val(e.latLng.lat());$("#longitude").val(e.latLng.lng());
+  infowindow.open(map);
+});
+
+///////////////////////////////////////////////////////////////////////	
+	///////////////////add mouse move  to track new  mapping/////////////////////
+	google.maps.event.addListener(map, "mousemove", function(e) {
+  $("#lattitude").val(e.latLng.lat());$("#longitude").val(e.latLng.lng());
+ 
+});
+
+///////////////////////////////////////////////////////////////////////	
+
+var infowindow = new google.maps.InfoWindow({
+ content:"ACC NO 37600100060<br>CENTER   <br>CENTER"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng(".$latcenter.",".$longcenter."),
+ map: map,
+});
+');
+
+foreach($id as $coord)
+	
+	{ 
+	
+	$x="select * FROM  mapping  where id=$coord ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+		if(mysqli_num_rows($x)>0)
+		{
+		
+		 while ($y=@mysqli_fetch_array($x))
+		{
+		fputs($myFile, '
+var infowindow = new google.maps.InfoWindow({
+ content:"ACC NO '.$y['account'].'<br>'.$y['client'].'<br>'.$y['status'].'"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng('.$y['lattitude'].','.$y['longitude'].'),
+ map: map,
+});
+');		
+			
+		}}
+	
+	
+
+	}
+	
+
+
+	$x="select * FROM  mapping  where client ='MASTER METER' ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+		if(mysqli_num_rows($x)>0)
+		{
+		
+		 while ($y=@mysqli_fetch_array($x))
+		{
+		fputs($myFile, '
+var infowindow = new google.maps.InfoWindow({
+ content:"METER NUMBER '.$y['account'].'<br>'.$y['client'].'<br>'.$y['status'].'"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng('.$y['lattitude'].','.$y['longitude'].'),icon:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+ map: map,
+});
+');		
+			
+		}}
+		
+fputs($myFile, 'infowindow.open(map,marker);</script>
+  
+  
+  
+  
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif; text-transform:uppercase;}
+* {box-sizing: border-box;}
+
+/* Button used to open the chat form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 50%;
+  width: 25%;
+}
+
+/* The popup chat - hidden by default */
+.chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 50%;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width textarea */
+.form-container textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+  min-height: 70px;
+}
+
+/* When the textarea gets focus, do something */
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/send button */
+.form-container .btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+#chathistory
+{
+	width: 100%; 
+	overflow-y: scroll;      
+  height: 180px;            //  <-- Select the height of the body
+   //position: absolute;	
+	
+}
+</style>
+  <script type="text/javascript" >
+  $(document).ready(function(){ 
+  
+  $("#chathistory").load("chathistory.php #chathist");
+  
+  $("#distcalc").submit(function()
+{$.post( "sessionregistry.php",
+$("#distcalc").serialize(),
+function(data){//alert(data);
+$("#distance").load("distcalc2.php #results");return false;});
+return false; 
+})
+ })
+  </script>
+ 
+</head>
+
+
+<form >
+  LAT<input type="text"  class="form-control input-sm" id="lattitude">LONG<input type="text" class="form-control input-sm"  id="longitude">
+ </div>
+    <div style="width:20%; float: left; display: inline-block;">
+  </form>
+<button class="open-button" onclick="openForm()">DIST-CALC</button>
+
+<div class="chat-popup" id="myForm">
+  <form action=""  method="post"  class="form-container"  id="distcalc">
+   POINT A CORDINATES
+	<br><a href="#" title="POINT A" data-toggle="popover" data-trigger="hover" data-content="LONGITUDE" data-placement="bottom">
+	<input type="text" name="long1" class="form-control input-sm"  required="on" placeholder="LONG" >
+	</a>
+		<br>
+		<a href="#" title="POINT A" data-toggle="popover" data-trigger="hover" data-content="LATTITUDE" data-placement="bottom">
+		<input type="text" name="latt1" class="form-control input-sm"  required="on" placeholder="LATT" >
+		</a>
+<hr>POINT B CORDINATES
+	<br>
+	<a href="#" title="POINT B" data-toggle="popover" data-trigger="hover" data-content="LONGITUDE" data-placement="bottom">
+	<input type="text" name="long2"  class="form-control input-sm"  required="on" placeholder="LONG" >
+	</a>
+		<br>
+		<a href="#" title="POINT B" data-toggle="popover" data-trigger="hover" data-content="LATTITUDE" data-placement="bottom">
+		<input type="text" name="latt2" class="form-control input-sm"   required="on" placeholder="LATT" >
+		</a>
+	<hr>
+<select class="form-control"   required= "on" class="form-control input-sm"   id="chatmate"  name="units" >
+			   <option value="">SELECT CALLIBRATION</option>
+			     <option value="METERS">METERS</option> 
+				  <option value="KILOMETERS">KILOMETERS</option>
+			  </select>	
+			  <hr>
+			 <div id="distance" >=</div>
+			 <hr>
+<div id="refresh"> </div>
+
+    <button type="submit" class="btn">CALCULATE</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
+
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+</script>
+  
+  
+  
+  </div>
+</div>
+
+
+
+ </body></html>'); 
+ 
+ 
+ $mapx = "offlinemap.html"; 
+ $myFile = fopen($mapx, "w");
+
+fputs($myFile,  ' <html  >
+
+<head>
+			
+   <script type="text/javascript" 
+           src="http://maps.google.com/maps/api/js?sensor=false"></script>
+</head> 
+<body>
+
+<div style="display:block; width:100%;">
+  <div style="width:80%; float: left; display: inline-block;">
+  <h3>HADDASSAH SOFTWARE GOOGLEMAPS</h3>
+<style type="text/css">
+			body{background-color:#ADD8E6 }
+			 #map{border-style:solid;border-radius:4%;width:98%; margin-right:1%; margin-left:1%; background-color:#FFFFFF;margin-top:2%;margin-bottom:2%}
+			h4{ text-align:center; font-weight:bolder; text-decoration:underline; }
+			</style>
+   <div id="map" style="width: 1100px; height: 1000px"></div> 
+
+   <script type="text/javascript"> 
+      var myOptions = {
+         zoom: 10,
+         center: new google.maps.LatLng('.$latcenter.','.$longcenter.'),
+         mapTypeId: google.maps.MapTypeId.'.$maptype.'
+      };
+
+      var map = new google.maps.Map(document.getElementById("map"), myOptions);
+	  
+	///////////////////add click to track new  mapping/////////////////////
+	
+	var infowindow = null;
+	google.maps.event.addListener(map, "click", function(e) {
+  if (infowindow != null)
+    //infowindow.close();
+
+  infowindow = new google.maps.InfoWindow({
+    content: "<b>Mouse Coordinates : </b><br><b>Latitude : </b>" + e.latLng.lat() + "<br><b>Longitude: </b>" + e.latLng.lng(),
+    position: e.latLng
+  });
+  infowindow.open(map);
+});
+
+///////////////////////////////////////////////////////////////////////	
+
+var infowindow = new google.maps.InfoWindow({
+ content:"ACC NO 37600100060<br>CENTER   <br>CENTER"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng(".$latcenter.",".$longcenter."),
+ map: map,
+});
+');
+
+foreach($id as $coord)
+	
+	{ 
+	
+	$x="select * FROM  mapping  where id=$coord ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+		if(mysqli_num_rows($x)>0)
+		{
+		
+		 while ($y=@mysqli_fetch_array($x))
+		{
+		fputs($myFile, '
+var infowindow = new google.maps.InfoWindow({
+ content:"ACC NO '.$y['account'].'<br>'.$y['client'].'<br>'.$y['status'].'"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng('.$y['lattitude'].','.$y['longitude'].'),
+ map: map,
+});
+');		
+			
+		}}
+	
+	
+
+	}
+	
+
+
+	$x="select * FROM  mapping  where client ='MASTER METER' ";
+$x=mysqli_query($connect,$x)or die(mysqli_error($connect));
+		if(mysqli_num_rows($x)>0)
+		{
+		
+		 while ($y=@mysqli_fetch_array($x))
+		{
+		fputs($myFile, '
+var infowindow = new google.maps.InfoWindow({
+ content:"METER NUMBER '.$y['account'].'<br>'.$y['client'].'<br>'.$y['status'].'"
+ });
+infowindow.open(map,marker); var marker = new google.maps.Marker({
+ position: new google.maps.LatLng('.$y['lattitude'].','.$y['longitude'].'),icon:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+ map: map,
+});
+');		
+			
+		}}
+		
+fputs($myFile, 'infowindow.open(map,marker);</script>
+  
+  
+  </div>
+  <div style="width:20%; float: left; display: inline-block;">
+  
+  
+  </div>
+</div>
+
+
+
+ </body></html>'); 
+
+?>

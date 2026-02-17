@@ -1,0 +1,23 @@
+tr {
+width: 100%;
+display: inline-table;
+table-layout: fixed;
+}
+
+table{
+ height:500px;             
+ display: -moz-groupbox; 
+ 
+}
+tbody{
+  overflow-y: scroll;      
+  height: 480px;            
+  width: 100%;
+  position: absolute;
+}
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+}
+

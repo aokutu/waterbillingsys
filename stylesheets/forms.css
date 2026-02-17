@@ -1,0 +1,38 @@
+<!--
+hr{color: #CCCCCC; }
+thead{ color: #000000;}
+tbody{ color:#000000; font-style:normal; background-color:#FFCC00; border:#0000FF; border:medium; }
+tr{ background-color: #FF9933; cursor:pointer;}
+tr:hover{ background-color: #CCCCCC; cursor:pointer; color:#0000FF;}
+tr > div:hover{ background-color: #CCCCCC; cursor:pointer; color:#0000FF;}
+.tbl_container{ overflow:auto; width: 100%; height:450px;border:thick; border:#0000FF; }
+.tbl_container2{ overflow:auto; width: 100%;height: 450px;}
+text{border: 1px solid #909090;font-family: Tahoma;}
+.button{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+.button:hover { background-color:#FF9900}
+file{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+file:hover { background-color:#FF9900}
+.searchbutton{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+button{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+submit{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+reset{ border:#0000FF; border:thick; border:#0000FF; color:#0000FF; text-transform:uppercase;}
+table{width:100%; border:thin; border:#333333;}
+.date{ width:30%;}
+form{ height:100%;  background: #FFFFFF; color:#0000FF;width:100%;  border-radius:5px;}
+form{ border: #CCCCCC; border: double;}
+.table{ color:#000000;}
+h2{  color:#000099; font-family:Geneva, Arial, Helvetica, sans-serif; font-size:18px;  margin-left:2%;}
+#letterhead{  margin-right:3%;}
+.theader{  background-color: #999999; font-style:oblique; font-weight:bolder;}
+#tabs{ font-size:small;}
+#newstaff{  background-color:}
+-->
+.select{  width:45%}.select2{  width:20%}#select{  width:45%}
+.content{ height:450px;}
+body{ background-color:#FFFFFF;}
+@media print{form{ width:100%;margin-left:2%;height: 3000px} .searchtext{display:none;}  .button{display:none;}   ul{display:none;} .tbl_container2{ width: 100%;height:3000px; } .tbl_container{  width: 100%;height: 3000px; }  #header{ background-color:#FF6600;}.theader{  background-color:  #999999; font-style:oblique; font-weight:bolder;}  tbody{  background-color:#FFFFFF; border-color:#000000;} date{display:none;}}
+
+#detailstable{  background-color:#FFFFFF;}
+fieldset{ width:95%; border-radius:2%;}
+#javascript{ background-color:#999999; text-align:center;}
+a:hover{ background-color: #CCCCCC}

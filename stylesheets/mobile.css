@@ -1,0 +1,9 @@
+ #dashboard{
+  overflow-y: scroll;      
+  height:  470px;            //  <-- Select the height of the body
+  width: 80%;
+  position: absolute;
+}	 
+a {width:100%}
+.btn-group{width:100%; background-color:#FFFFFF;}
+@media screen and (max-device-width: 480px) {#trialdays{display:none;}}

@@ -1,0 +1,1 @@
+@media print { select{display:none;} #searchtext{display:none;} button{display:none;}; tbody{ overflow:visible;} tbody{ overflow:visible;}}
